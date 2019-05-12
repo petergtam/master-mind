@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+spec:
+  selector:
+    matchLabels:
+      db: postgres
+  template:
+    metadata:
+      name: postgres-pod
+      labels:
+        db: postgres
+    spec:
+      containers:
+      - name: postgres
+        image: postgres:alpine
+        env: 
+          - name: POSTGRES_USER
+            valueFrom:
+              secretKeyRef:
+                name: postgres-config
+                key: user
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: postgres-config
+                key: pass
+          - name: POSTGRES_DB
+            valueFrom:
+              secretKeyRef:
+                name: postgres-config
+                key: db
+        ports:
+          - containerPort: 5432
