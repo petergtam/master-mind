@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-pod-rules
+  labels:
+    prometheus: k8s
+    role: alert-rules
+data:
+  pod.rules.yaml: |+
+    groups:
+    - name: db
+      rules:
+        - alert: PodDown
+          expr: kube_pod_container_status_terminated == 0
+          for: 1m
+          annotations:
+            summary: "Pod terminated {{ $labels.pod-name }}"
+            description: "{{ $labels.container-name }} terminated {{ $value }} in {{ $labels.pod-namespace }}/{{ $labels.pod-name }}"
